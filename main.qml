@@ -7,50 +7,8 @@ Window {
     visible: true
     title: qsTr("Artchive")
 
-    Item {
-        id: explorer
-        width: 300
-        height: 200
-
-        ListModel {
-            id: fileList
-
-            ListElement {
-                name: "design_one"
-                extension: ".procreate"
-            }
-
-            ListElement {
-                name: "design_one"
-                extension: ".kra"
-            }
-
-            ListElement {
-                name: "design_one"
-                extension: ".fig"
-            }
-        }
-
-        Component {
-            id: fileListElement
-            Text {
-                text: name + extension
-            }
-        }
-
-        ListView {
-            anchors.fill: parent
-            model: fileList
-            delegate: fileListElement
-            // Button: {
-            //     id: button
-            //     text: "Click to open popup"
-
-            //     onClicked: {
-            //         myPopup.open()
-            //     }
-            // }
-        }
+    Explorer {
+        anchors.centerIn: parent
     }
 
     // Popup {
