@@ -20,24 +20,4 @@ Window {
         width: 50
         height: 50
     }
-
-    // Popup {
-    //     id: myPopup
-    //     width: 150
-    //     height: 75
-    //     closePolicy: "CloseOnEscape"
-    //     anchors.centerIn: parent
-
-    //     Column {
-    //         spacing: 10
-
-    //         Button {
-    //             text: "close"
-    //             width: 100
-    //             onClicked: {
-    //                 myPopup.close()
-    //             }
-    //         }
-    //     }
-    // }
 }

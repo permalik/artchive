@@ -7,10 +7,8 @@ int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    // Create an instance of DesignFjles
     DesignFiles designFiles;
 
-    // Register the MyModel instance with the QML engine
     engine.rootContext()->setContextProperty("designFiles", &designFiles);
 
     const QUrl url(QStringLiteral("qrc:/artchive/main.qml"));
