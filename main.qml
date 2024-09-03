@@ -13,9 +13,14 @@ Window {
 
     Image {
         source: "qrc:/assets/icons/icon-chive.png"
-        // anchors.top: explorerContainer.bottom
-        // anchors.left: explorerContainer.right
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+        }
+        width: 50
+        height: 50
     }
+
     // Popup {
     //     id: myPopup
     //     width: 150
