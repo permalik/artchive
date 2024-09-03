@@ -16,7 +16,7 @@ qt_add_qml_module(appartchive
     VERSION 1.0
     QML_FILES main.qml
     QML_FILES Explorer.qml
-    RESOURCE_PREFIX /artchive
+    RESOURCE_PREFIX /
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
