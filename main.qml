@@ -12,7 +12,7 @@ Window {
     }
 
     Image {
-        source: "qrc:/icon-chive.png"
+        source: "qrc:/assets/icons/icon-chive.png"
         // anchors.top: explorerContainer.bottom
         // anchors.left: explorerContainer.right
     }

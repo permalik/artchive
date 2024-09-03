@@ -7,7 +7,6 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/artchive/main.qml"));
-    QString icons = QStringLiteral("qrc:/icons.qrc");
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreated,
@@ -17,7 +16,6 @@ int main(int argc, char *argv[])
                 QCoreApplication::exit(-1);
         },
         Qt::QueuedConnection);
-    engine.load(icons);
     engine.load(url);
 
     return app.exec();

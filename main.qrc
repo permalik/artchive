@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>icon-chive.png</file>
+        <file>assets/icons/icon-chive.png</file>
     </qresource>
 </RCC>
