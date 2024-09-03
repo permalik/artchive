@@ -59,10 +59,4 @@ Item {
             // }
         }
     }
-
-    Image {
-        source: "/assets/icon-chive.png"
-        anchors.top: explorerContainer.bottom
-        anchors.left: explorerContainer.right
-    }
 }

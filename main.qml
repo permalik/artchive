@@ -11,6 +11,11 @@ Window {
         anchors.centerIn: parent
     }
 
+    Image {
+        source: "qrc:/icon-chive.png"
+        // anchors.top: explorerContainer.bottom
+        // anchors.left: explorerContainer.right
+    }
     // Popup {
     //     id: myPopup
     //     width: 150
