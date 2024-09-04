@@ -1,6 +1,5 @@
 #ifndef DESIGNFILES_H
 #define DESIGNFILES_H
-
 #include <QObject>
 
 class DesignFiles : public QObject {

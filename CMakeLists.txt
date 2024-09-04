@@ -9,6 +9,7 @@ set(CMAKE_AUTORCC ON)
 SET(AUTORCC_OPTIONS "/main.qrc")
 
 find_package(Qt6 6.2 COMPONENTS Quick REQUIRED)
+find_package(Qt6 6.2 COMPONENTS Sql REQUIRED)
 
 qt_add_executable(appartchive
     main.cpp
@@ -22,6 +23,7 @@ qt_add_qml_module(appartchive
     RESOURCE_PREFIX /
     RESOURCES main.qrc
     SOURCES designfiles.h designfiles.cpp
+    SOURCES designdirectory.h designdirectory.cpp
 )
 
 
@@ -37,7 +39,9 @@ set_target_properties(appartchive PROPERTIES
 )
 
 target_link_libraries(appartchive
-    PRIVATE Qt6::Quick)
+    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Sql
+)
 
 include(GNUInstallDirs)
 install(TARGETS appartchive
