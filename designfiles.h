@@ -2,6 +2,8 @@
 #define DESIGNFILES_H
 #include <QObject>
 
+// TODO: Refactor itemsChanged and other casing conventions to snake_case
+
 class DesignFiles : public QObject {
     Q_OBJECT
     Q_PROPERTY(QStringList items READ items NOTIFY itemsChanged)
