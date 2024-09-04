@@ -1,39 +1,24 @@
-#include "designfiles.h"
-#include <iostream>
-#include <sys/stat.h>
-#include <dirent.h>
 #include <cstring>
+#include <dirent.h>
+#include <filesystem>
+#include <sys/stat.h>
+#include "designfiles.h"
+
+namespace fs = std::filesystem;
 
 DesignFiles::DesignFiles(QObject *parent) : QObject{parent} {
-    const char* path = "/Users/au4/git/artchive/data";
 
-    DIR* dir = opendir(path);
-    if (dir == nullptr) {
-        std::cerr << "Error: Unable to open directory." << std::endl;
+    const fs::path path{"/Users/au4/git/artchive/data"};
+
+    for (const auto& file : fs::directory_iterator(path)) {
+        QString file_name = QString::fromStdString(file.path().filename().string());
+
+        d_files.append(file_name);
     }
 
-    struct dirent* file;
-    struct stat fileStat;
-
-    while ((file= readdir(dir)) != nullptr) {
-        std::string fullPath = std::string(path) + "/" + file->d_name;
-
-        if (stat(fullPath.c_str(), &fileStat) == -1) {
-            std::cerr << "Error: Unable to stat: " << file->d_name << std::endl;
-            continue;
-        }
-
-        // Skip "." and ".." entries
-        if (strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0) {
-            continue;
-        }
-
-        d_files << file->d_name;
-    }
-
-    closedir(dir);
-
-    std::sort(d_files.begin(), d_files.end());
+    std::sort(d_files.begin(), d_files.end(), [](const QString &a, const QString &b) {
+        return a < b;
+    });
 }
 
 QStringList DesignFiles::items() const {
