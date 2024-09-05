@@ -1,12 +1,12 @@
 #ifndef ARTCHIVEDB_H
 #define ARTCHIVEDB_H
 
-#include "database.h"
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <string>
 #include <vector>
+#include "database.h"
 
 class ArtchiveDB : public Database {
 

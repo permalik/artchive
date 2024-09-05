@@ -8,7 +8,6 @@ namespace fs = std::filesystem;
 
 DesignFiles::DesignFiles(QObject *parent) : QObject{parent} {
 
-    // TODO: Get from db
     const fs::path path{"/Users/au4/git/artchive/data"};
 
     for (const auto& file : fs::directory_iterator(path)) {

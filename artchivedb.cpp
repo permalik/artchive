@@ -1,5 +1,5 @@
-#include "artchivedb.h"
 #include <QVariant>
+#include "artchivedb.h"
 
 ArtchiveDB::ArtchiveDB() {
     db = QSqlDatabase::addDatabase("QSQLITE");
