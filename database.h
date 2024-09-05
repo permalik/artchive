@@ -2,6 +2,7 @@
 #define DATABASE_H
 
 #include <string>
+#include <vector>
 
 class Database {
 
@@ -22,7 +23,7 @@ public:
 
     virtual void rollback_transaction() = 0;
 
-    virtual void is_connected() const = 0;
+    virtual bool is_connected() const = 0;
 
     virtual std::string get_last_error() const = 0;
 };

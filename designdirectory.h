@@ -1,7 +1,9 @@
 #ifndef DESIGNDIRECTORY_H
 #define DESIGNDIRECTORY_H
+
 #include <QObject>
-#include <QSqlDatabase>
+#include <QString>
+#include "artchivedb.h"
 
 class DesignDirectory : public QObject {
     Q_OBJECT
@@ -9,7 +11,6 @@ class DesignDirectory : public QObject {
 
 public:
     explicit DesignDirectory(QObject *parent = nullptr);
-
     QString dir_path() const;
 
 public slots:
@@ -19,11 +20,11 @@ signals:
     void dir_changed(const QString & dir_path);
 
 private:
-    QString d_path;
-    QSqlDatabase db;
+    bool initialize_database();
+    bool update_database(const QString &dir_path);
 
-    bool initializeDatabase();
-    bool updateDatabase(const QString &dir_path);
+    QString d_path;
+    ArtchiveDB db;
 };
 
 #endif // DESIGNDIRECTORY_H

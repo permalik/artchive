@@ -25,6 +25,7 @@ qt_add_qml_module(appartchive
     SOURCES designfiles.h designfiles.cpp
     SOURCES designdirectory.h designdirectory.cpp
     SOURCES database.h database.cpp
+    SOURCES artchivedb.h artchivedb.cpp
 )
 
 
