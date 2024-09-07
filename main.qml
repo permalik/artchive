@@ -2,8 +2,10 @@ import QtQuick
 import QtQuick.Controls.Fusion
 
 Window {
-    width: 640
-    height: 480
+    minimumWidth: 640
+    minimumHeight: 480
+    maximumWidth: 640
+    maximumHeight: 480
     visible: true
     title: qsTr("Artchive")
 
@@ -17,7 +19,7 @@ Window {
 
     Text {
         id: current_directory
-        text: designDirectory.dir_path
+        text: designDirectory ? designDirectory.dir_path : "Loading..."
         anchors.top: current_directory_heading.top
         anchors.left: current_directory_heading.right
     }
