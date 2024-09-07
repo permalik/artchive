@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Fusion
 
 Window {
     width: 640
@@ -7,28 +7,63 @@ Window {
     visible: true
     title: qsTr("Artchive")
 
-    Explorer {
-        anchors.centerIn: parent
+    Text {
+        id: current_directory_heading
+        text: qsTr("Current Directory: ")
+        x: 25
+        y: 15
+        font.bold: true
+    }
+
+    Text {
+        id: current_directory
+        text: designDirectory.get_dir_path()
+        anchors.top: current_directory_heading.top
+        anchors.left: current_directory_heading.right
     }
 
     property string init_dir_path: ""
 
     TextField {
         id: design_path_id
-        x: 320
+        x: 25
         y: 50
+        width: 200
         color: "#000"
+        background: Rectangle {
+            width: parent.width
+            height: parent.height
+            color: "#000"
+            opacity: 0.1
+            radius: 3
+        }
         font.pointSize: 14
-        placeholderText: "/design/path"
+        placeholderText: qsTr("/design/path")
         renderType: Text.QtRendering
         onTextChanged: init_dir_path = text
     }
 
     Button {
+        id: submit_button
         text: "Submit"
-        x: 350
-        y: 100
+        x: 25
+        y: 85
+        topPadding: 5
+        rightPadding: 15
+        bottomPadding: 5
+        leftPadding: 15
+        background: Rectangle {
+            width: parent.width
+            height: parent.height
+            color: '#26A4F4'
+            opacity: submit_button.down ? 0.75 : (submit_button.hovered ? 0.5 : 0.25)
+            radius: 3
+        }
         onClicked: designDirectory.set_dir_path(init_dir_path)
+    }
+
+    Explorer {
+        anchors.centerIn: parent
     }
 
     Image {

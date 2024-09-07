@@ -15,6 +15,7 @@ public:
 
 public slots:
     void set_dir_path(const QString &dir_path);
+    QString get_dir_path();
 
 signals:
     void dir_changed(const QString & dir_path);

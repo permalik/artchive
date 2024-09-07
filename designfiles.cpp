@@ -8,7 +8,7 @@ namespace fs = std::filesystem;
 
 DesignFiles::DesignFiles(QObject *parent) : QObject{parent} {
 
-    const fs::path path{"/Users/au4/git/artchive/data"};
+    const fs::path path{"/Users/tymalik/Documents/git/artchive/data"};
 
     for (const auto& file : fs::directory_iterator(path)) {
         QString file_name = QString::fromStdString(file.path().filename().string());
