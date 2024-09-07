@@ -2,6 +2,7 @@
 #define DESIGNFILES_H
 
 #include <QObject>
+#include "designdirectory.h"
 
 // TODO: Refactor to snake_case
 class DesignFiles : public QObject {
@@ -9,14 +10,14 @@ class DesignFiles : public QObject {
     Q_PROPERTY(QStringList items READ items NOTIFY itemsChanged)
 
 public:
-    explicit DesignFiles(QObject *parent = nullptr);
-
+    explicit DesignFiles(DesignDirectory *designDirectory, QObject *parent = nullptr);
     QStringList items() const;
 
 signals:
     void itemsChanged();
 
 private:
+    DesignDirectory *designDirectory;
     QStringList d_files;
 };
 

@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine;
 
     DesignDirectory designDirectory;
-    DesignFiles designFiles;
+    DesignFiles designFiles(&designDirectory);
 
     engine.rootContext()->setContextProperty("designFiles", &designFiles);
     engine.rootContext()->setContextProperty("designDirectory", &designDirectory);
