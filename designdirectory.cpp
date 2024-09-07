@@ -7,7 +7,9 @@
 
 DesignDirectory::DesignDirectory(QObject *parent) : QObject{parent} {
   if (!initialize_database()) {
-    qWarning() << "Failed to initialize database.";
+        qWarning() << "Failed to initialize database." << QString::fromStdString(db.get_last_error());
+  } else {
+      d_path = get_dir_path();
   }
 }
 

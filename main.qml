@@ -17,7 +17,7 @@ Window {
 
     Text {
         id: current_directory
-        text: designDirectory.get_dir_path()
+        text: designDirectory.dir_path
         anchors.top: current_directory_heading.top
         anchors.left: current_directory_heading.right
     }
