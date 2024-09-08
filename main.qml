@@ -2,12 +2,12 @@ import QtQuick
 import QtQuick.Controls.Fusion
 
 Window {
+    title: qsTr("Artchive")
+    visible: true
     minimumWidth: 640
     minimumHeight: 480
     maximumWidth: 640
     maximumHeight: 480
-    visible: true
-    title: qsTr("Artchive")
 
     Text {
         id: current_directory_heading
@@ -16,22 +16,27 @@ Window {
         y: 15
         font.bold: true
     }
-
     Text {
         id: current_directory
         text: designDirectory ? designDirectory.dir_path : "Loading..."
-        anchors.top: current_directory_heading.top
-        anchors.left: current_directory_heading.right
+        anchors {
+            top: current_directory_heading.top
+            left: current_directory_heading.right
+        }
     }
 
     property string init_dir_path: ""
 
     TextField {
         id: design_path_id
+        placeholderText: qsTr("/design/path")
+        renderType: Text.QtRendering
+        onTextChanged: init_dir_path = text
         x: 25
         y: 50
         width: 200
         color: "#000"
+        font.pointSize: 14
         background: Rectangle {
             width: parent.width
             height: parent.height
@@ -39,15 +44,11 @@ Window {
             opacity: 0.1
             radius: 3
         }
-        font.pointSize: 14
-        placeholderText: qsTr("/design/path")
-        renderType: Text.QtRendering
-        onTextChanged: init_dir_path = text
     }
-
     Button {
         id: submit_button
         text: "Submit"
+        onClicked: designDirectory.set_dir_path(init_dir_path)
         x: 25
         y: 85
         topPadding: 5
@@ -61,13 +62,10 @@ Window {
             opacity: submit_button.down ? 0.75 : (submit_button.hovered ? 0.5 : 0.25)
             radius: 3
         }
-        onClicked: designDirectory.set_dir_path(init_dir_path)
     }
-
     Explorer {
         anchors.centerIn: parent
     }
-
     Image {
         id: icon_badge
         source: "qrc:/assets/icons/icon-chive.png"

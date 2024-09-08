@@ -31,7 +31,7 @@ void DesignDirectory::set_dir_path(const QString &dir_path) {
 }
 
 QString DesignDirectory::get_dir_path() {
-    const std::string get_dir_path_query = "SELECT dir_path FROM config WHERE id = 1";
+    std::string get_dir_path_query = "SELECT dir_path FROM config WHERE id = 1";
     std::vector<std::vector<std::string>> result = db.execute_select_query(get_dir_path_query);
     if (!result.empty() && !result[0].empty()) {
         return QString::fromStdString(result[0][0]);
