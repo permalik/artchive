@@ -16,9 +16,10 @@ Window {
         y: 15
         font.bold: true
     }
+    // dir_path = "/Users/tymalik/Documents/git/artchive_data";
     Text {
         id: current_directory
-        text: designDirectory ? designDirectory.dir_path : "Loading..."
+        text: designFiles.dir_path
         anchors {
             top: current_directory_heading.top
             left: current_directory_heading.right
@@ -48,7 +49,7 @@ Window {
     Button {
         id: submit_button
         text: "Submit"
-        onClicked: designDirectory.set_dir_path(init_dir_path)
+        onClicked: designFiles.set_dir_path(init_dir_path)
         x: 25
         y: 85
         topPadding: 5

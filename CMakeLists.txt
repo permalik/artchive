@@ -23,9 +23,6 @@ qt_add_qml_module(appartchive
     RESOURCE_PREFIX /
     RESOURCES main.qrc
     SOURCES designfiles.h designfiles.cpp
-    SOURCES designdirectory.h designdirectory.cpp
-    SOURCES database.h database.cpp
-    SOURCES artchivedb.h artchivedb.cpp
 )
 
 

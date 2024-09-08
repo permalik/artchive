@@ -1,69 +1,76 @@
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
-#include <filesystem>
-#include <fstream>
+// #include <filesystem>
+// #include <fstream>
 #include <QString>
-#include <string>
+#include <QVariant>
+// #include <string>
 #include <sys/stat.h>
 #include "designfiles.h"
 
 namespace fs = std::filesystem;
 
-DesignFiles::DesignFiles(DesignDirectory *designDirectory, QObject *parent) : QObject{parent} {
-    if (designDirectory) {
-        const QString dir_path = designDirectory->dir_path();
-        const std::string git_status_file = "git_status.txt";
+// std::vector<std::string> parse_git_status(std::string dir_path, std::string git_status_file, std::string redirect_command, std::string parsing_string) {
+//     int result = std::system(redirect_command.c_str());
+//     if (result != 0) {
+//         qWarning() << "Failed to redirect git_status: ";
+//     }
+//
+//     std::ifstream file(dir_path + "/" + git_status_file);
+//     if (!file.is_open()) {
+//         qWarning() << "Cannot open git_status_file: ";
+//     }
+//
+//     std::string line;
+//     std::vector<std::string> file_list;
+//     while (std::getline(file, line)) {
+//         line = line.find(parsing_string);
+//
+//         qDebug() << "file_name: " << line;
+//         file_list.push_back(line);
+//     }
+//
+//     file.close();
+//     return file_list;
+// }
 
-        file_colors = {QColor(Qt::red),  QColor(Qt::green),
-                       QColor(Qt::blue), QColor(Qt::yellow),
-                       QColor(Qt::cyan), QColor(Qt::magenta),
-                       QColor(Qt::gray), QColor(Qt::black)};
+DesignFiles::DesignFiles(QObject *parent) : QObject{parent} {
+    m_dir_path = QString::fromStdString("Set directory path.");
+    // const std::string dir_path = "/Users/tymalik/Documents/git/artchive_data";
 
-        std::string redirect_git_status =
-            "cd " + dir_path.toStdString() + " && git status | grep " +
-                                          "'new file:'" + " > " + git_status_file;
-        int result = std::system(redirect_git_status.c_str());
-        if (result != 0) {
-            qWarning() << "Failed to append redirect git_status: ";
-    }
+    // const std::string git_status_file = "git_status.txt";
 
-    std::ifstream file(dir_path.toStdString() + "/" + git_status_file);
-    if (!file.is_open()) {
-        qWarning() << "Cannot open git_status_file: ";
-    }
+    // std::string redirect_new_file = "cd " + dir_path +
+    //                                 " && git status | grep " + "'new file:'" +
+    //                                 " > " + git_status_file;
+    // std::string parsing_string = "\tnew file:/ / / ";
+    // std::vector<std::string> new_files = parse_git_status(
+    //     dir_path, git_status_file, redirect_new_file, parsing_string);
 
-    std::string line;
-    while (std::getline(file, line)) {
-        qDebug() << line;
-    }
+    // const fs::path path{dir_path};
+    // for (const auto &file : fs::directory_iterator(path)) {
+    //     QString file_name =
+    //         QString::fromStdString(file.path().filename().string());
 
-    file.close();
+    //     d_files.append(file_name);
+    //     file_colors.append("blue");
+    //     }
 
-    const fs::path path{dir_path.toStdString()};
-    for (const auto& file : fs::directory_iterator(path)) {
-        QString file_name = QString::fromStdString(file.path().filename().string());
+    //     std::sort(d_files.begin(), d_files.end(), [](const QString &a, const QString &b) {
+    //         return a < b;
+    //     });
+    // }
+}
 
-        d_files.append(file_name);
-        // if (file_name.endsWith(".psd")) {
-        //     file_colors.append(Qt::blue);
-        // } else if (file_name.endsWith(".fig")) {
-        //     file_colors.append(Qt::green);
-        // } else {
-        //     file_colors.append(Qt::black);
-        // }
-        // file_colors.append(Qt::blue);
-        // file_colors.append(Qt::yellow);
-        // file_colors.append(Qt::red);
-        // file_colors.append(Qt::green);
-        // file_colors.append(Qt::black);
-        // file_colors.append(Qt::blue);
-    }
-    std::sort(d_files.begin(), d_files.end(), [](const QString &a, const QString &b) {
-        return a < b;
-    });
-    } else {
-        qWarning() << "DesignDirectory instance is null: ";
+QString DesignFiles::dir_path() const {
+    return m_dir_path;
+}
+
+void DesignFiles::set_dir_path(const QString &dir_path) {
+    if (m_dir_path != dir_path) {
+        m_dir_path = dir_path;
+        emit dir_path_changed();
     }
 }
 
