@@ -10,20 +10,20 @@ Window {
     maximumHeight: 480
 
     Text {
-        id: current_directory_heading
-        text: qsTr("Current Directory: ")
+        id: working_directory_heading
+        text: qsTr("Working Directory: ")
         x: 25
         y: 15
         font.bold: true
     }
-    // dir_path = "/Users/tymalik/Documents/git/artchive_data";
-    Text {
+    TextEdit {
         id: current_directory
         text: designFiles.dir_path
         anchors {
-            top: current_directory_heading.top
-            left: current_directory_heading.right
+            top: working_directory_heading.top
+            left: working_directory_heading.right
         }
+        readOnly: true
     }
 
     property string init_dir_path: ""
@@ -31,24 +31,25 @@ Window {
     TextField {
         id: design_path_id
         placeholderText: qsTr("/design/path")
-        renderType: Text.QtRendering
+        // renderType: Text.QtRendering
         onTextChanged: init_dir_path = text
         x: 25
         y: 50
-        width: 200
+        width: 300
         color: "#000"
+        placeholderTextColor: design_path_id.activeFocus ? "transparent" : "#535353"
         font.pointSize: 14
         background: Rectangle {
             width: parent.width
             height: parent.height
-            color: "#000"
-            opacity: 0.1
+            color: "#EAEAEA"
+            border.width: 1
+            border.color: design_path_id.activeFocus ? "#000" : "#FFF"
             radius: 3
         }
     }
     Button {
         id: submit_button
-        text: "Submit"
         onClicked: designFiles.set_dir_path(init_dir_path)
         x: 25
         y: 85
@@ -56,6 +57,11 @@ Window {
         rightPadding: 15
         bottomPadding: 5
         leftPadding: 15
+        contentItem: Text {
+            text: "Submit"
+            color: "#000"
+            font.bold: true
+        }
         background: Rectangle {
             width: parent.width
             height: parent.height
