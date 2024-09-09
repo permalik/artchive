@@ -1,3 +1,4 @@
+#include <QColor>
 #include <QString>
 #include <QStringList>
 #include <QVariant>
@@ -15,37 +16,12 @@ namespace fs = std::filesystem;
 
 // /Users/tymalik/Documents/git/artchive_data
 
-// std::vector<std::string> parse_git_status(std::string dir_path, std::string
-// git_status_file, std::string redirect_command, std::string parsing_string) {
-//     int result = std::system(redirect_command.c_str());
-//     if (result != 0) {
-//         qWarning() << "Failed to redirect git_status: ";
-//     }
-//
-//     std::ifstream file(dir_path + "/" + git_status_file);
-//     if (!file.is_open()) {
-//         qWarning() << "Cannot open git_status_file: ";
-//     }
-//
-//     std::string line;
-//     std::vector<std::string> file_list;
-//     while (std::getline(file, line)) {
-//         line = line.find(parsing_string);
-//
-//         qDebug() << "file_name: " << line;
-//         file_list.push_back(line);
-//     }
-//
-//     file.close();
-//     return file_list;
-// }
-
 std::string sys_file_path() {
     std::string current_user;
     if (const char *system_user = std::getenv("USER")) {
         current_user = std::string(system_user);
     }
-    return "/Users/" + current_user + "/artchive_directory_path.txt";
+    return "/Users/" + current_user + "/.config/artchive_directory_path.txt";
 }
 
 std::string bak_file_path() {
@@ -53,7 +29,7 @@ std::string bak_file_path() {
     if (const char *system_user = std::getenv("USER")) {
         current_user = std::string(system_user);
     }
-    return "/Users/" + current_user + "/artchive_directory_path.txt.bak";
+    return "/Users/" + current_user + "/.config/artchive_directory_path.txt.bak";
 }
 
 void chown_chmod(const fs::path &file_path) {
@@ -87,18 +63,6 @@ QString init_directory_path() {
 
     file.close();
     return QString::fromStdString(file_path);
-}
-
-DesignFiles::DesignFiles(QObject *parent) : QObject{parent} {
-    m_dir_path = init_directory_path();
-    // const std::string git_status_file = "git_status.txt";
-
-    // std::string redirect_new_file = "cd " + dir_path +
-    //                                 " && git status | grep " + "'new file:'" +
-    //                                 " > " + git_status_file;
-    // std::string parsing_string = "\tnew file:/ / / ";
-    // std::vector<std::string> new_files = parse_git_status(
-    //     dir_path, git_status_file, redirect_new_file, parsing_string);
 }
 
 QString DesignFiles::dir_path() const { return m_dir_path; }
@@ -137,22 +101,76 @@ void DesignFiles::set_dir_path(const QString &dir_path) {
     }
 }
 
-QStringList DesignFiles::items() {
-    QStringList files;
+    // const std::string git_status_file = "git_status.txt";
+
+    // std::string redirect_new_file = "cd " + dir_path +
+    //                                 " && git status | grep " + "'new file:'" +
+    //                                 " > " + git_status_file;
+    // std::string parsing_string = "\tnew file:/ / / ";
+    // std::vector<std::string> new_files = parse_git_status(
+    //     dir_path, git_status_file, redirect_new_file, parsing_string);
+// std::vector<std::string> git_status(std::string dir_path, std::string
+// git_status_file, std::string redirect_command, std::string parsing_string) {
+//     int result = std::system(redirect_command.c_str());
+//     if (result != 0) {
+//         qWarning() << "Failed to redirect git_status: ";
+//     }
+//
+//     std::ifstream file(dir_path + "/" + git_status_file);
+//     if (!file.is_open()) {
+//         qWarning() << "Cannot open git_status_file: ";
+//     }
+//
+//     std::string line;
+//     std::vector<std::string> file_list;
+//     while (std::getline(file, line)) {
+//         line = line.find(parsing_string);
+//
+//         qDebug() << "file_name: " << line;
+//         file_list.push_back(line);
+//     }
+//
+//     file.close();
+//     return file_list;
+// }
+
+void DesignFiles::design_assets() {
+    std::vector<std::string> all_files;
     const fs::path path{m_dir_path.toStdString()};
     if (fs::exists(m_dir_path.toStdString()) && fs::is_directory(m_dir_path.toStdString())) {
         for (const std::filesystem::directory_entry &file : fs::directory_iterator(path)) {
-            QString file_name = QString::fromStdString(file.path().filename().string());
+            std::string file_name = file.path().filename().string();
 
-            files.append(file_name);
-            // file_colors.append("blue");
+            all_files.push_back(file_name);
+            qDebug() << "init file_name: " << file_name;
         }
     } else {
         qWarning() << "Path does not exist or is not a directory: ";
     }
 
-    std::sort(files.begin(), files.end(),
-              [](const QString &a, const QString &b) { return a < b; });
+    std::vector<std::tuple<std::string, std::string>> assets(all_files.size());
+    for (size_t i = 0; i < all_files.size(); i++) {
+        assets[i] = std::make_tuple(all_files[i], "red");
+    }
+
+    for (auto& asset : assets) {
+        qDebug() << "assets file_name: " << std::get<0>(asset);
+    }
+}
+
+// TODO: sort asset_map
+// std::sort(all_files.begin(), all_files.end(), [](const QString &a, const QString &b) { return a < b; });
+
+QStringList DesignFiles::items() {
+    design_assets();
+    QStringList files;
+    int i = 0;
+    qDebug() << "Processing items";
+    for (auto& asset : assets) {
+        QString file_name = QString::fromStdString(std::get<0>(asset));
+        files[i] = file_name;
+        i++;
+    }
 
     d_files = files;
     emit items_changed();
@@ -161,3 +179,7 @@ QStringList DesignFiles::items() {
 }
 
 QVector<QColor> DesignFiles::colors() const { return file_colors; }
+
+DesignFiles::DesignFiles(QObject *parent) : QObject{parent} {
+    m_dir_path = init_directory_path();
+}

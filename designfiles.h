@@ -17,6 +17,8 @@ public:
 
     QString dir_path() const;
 
+    void design_assets();
+
     QStringList items();
 
     QVector<QColor> colors() const;
@@ -30,6 +32,8 @@ signals:
 
 private:
     QString m_dir_path;
+    std::vector<std::string> all_files;
+    std::vector<std::tuple<std::string, std::string>> assets;
     QStringList d_files;
     QVector<QColor> file_colors;
 };
