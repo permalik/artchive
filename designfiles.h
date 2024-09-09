@@ -17,7 +17,7 @@ public:
 
     QString dir_path() const;
 
-    QStringList items() const;
+    QStringList items();
 
     QVector<QColor> colors() const;
 
