@@ -9,6 +9,11 @@ Window {
     maximumWidth: 640
     maximumHeight: 480
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: forceActiveFocus()
+    }
+
     Text {
         id: working_directory_heading
         text: qsTr("Working Directory: ")
@@ -19,11 +24,11 @@ Window {
     TextEdit {
         id: current_directory
         text: designFiles.dir_path
+        readOnly: true
         anchors {
             top: working_directory_heading.top
             left: working_directory_heading.right
         }
-        readOnly: true
     }
 
     property string init_dir_path: ""
@@ -33,6 +38,7 @@ Window {
         placeholderText: qsTr("/design/path")
         // renderType: Text.QtRendering
         onTextChanged: init_dir_path = text
+        Keys.onReturnPressed: designFiles.set_dir_path(init_dir_path)
         x: 25
         y: 50
         width: 300
