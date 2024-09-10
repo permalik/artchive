@@ -1,6 +1,7 @@
 #ifndef DESIGNFILES_H
 #define DESIGNFILES_H
 
+#include <future>
 #include <QColor>
 #include <QObject>
 #include <QVector>
@@ -19,6 +20,8 @@ public:
 
     void design_assets();
 
+    std::future<void> async_design_assets();
+
     QStringList items();
 
     QVector<QColor> colors() const;
@@ -32,7 +35,7 @@ signals:
 
 private:
     QString m_dir_path;
-    std::vector<std::string> all_files;
+    std::vector<std::string> local_files;
     std::vector<std::tuple<std::string, std::string>> assets;
     QStringList d_files;
     QVector<QColor> file_colors;

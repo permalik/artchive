@@ -27,7 +27,7 @@ Item {
                    for (var i = 0; i < designFiles.items.length; i++) {
                        fileList.append({
                                            "name": designFiles.items[i],
-                                           // "color": designFiles.colors[i]
+                                           "color": designFiles.colors[i]
                                        })
                    }
                }
@@ -37,7 +37,7 @@ Item {
                    text: model.name
                    readOnly: true
                    selectByMouse: true
-                   // color: model.color
+                   color: model.color
                }
            }
         }

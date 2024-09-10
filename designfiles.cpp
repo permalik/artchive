@@ -7,10 +7,12 @@
 #include <dirent.h>
 #include <filesystem>
 #include <fstream>
+#include <future>
+#include <mutex>
 // #include <string>
-#include "designfiles.h"
 #include <sys/stat.h>
 #include <unistd.h>
+#include "designfiles.h"
 
 namespace fs = std::filesystem;
 
@@ -134,52 +136,71 @@ void DesignFiles::set_dir_path(const QString &dir_path) {
 //     return file_list;
 // }
 
+std::mutex mtx;
+
 void DesignFiles::design_assets() {
-    std::vector<std::string> all_files;
+    std::vector<std::string> local_files;
     const fs::path path{m_dir_path.toStdString()};
-    if (fs::exists(m_dir_path.toStdString()) && fs::is_directory(m_dir_path.toStdString())) {
-        for (const std::filesystem::directory_entry &file : fs::directory_iterator(path)) {
-            std::string file_name = file.path().filename().string();
 
-            all_files.push_back(file_name);
-            qDebug() << "init file_name: " << file_name;
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        if (fs::exists(path) && fs::is_directory(path)) {
+            for (const std::filesystem::directory_entry &file : fs::directory_iterator(path)) {
+                std::string file_name = file.path().filename().string();
+                local_files.push_back(file_name);
+                qDebug() << "init file_name: " << QString::fromStdString(file_name);
+            }
+        } else {
+            qWarning() << "Path does not exist or is not a directory: ";
+            return;
         }
-    } else {
-        qWarning() << "Path does not exist or is not a directory: ";
     }
 
-    std::vector<std::tuple<std::string, std::string>> assets(all_files.size());
-    for (size_t i = 0; i < all_files.size(); i++) {
-        assets[i] = std::make_tuple(all_files[i], "red");
+    std::lock_guard<std::mutex> lock(mtx);
+    assets.resize(local_files.size());
+    for (size_t i = 0; i < local_files.size(); i++) {
+        assets[i] = std::make_tuple(local_files[i], "red");
+        qDebug() << "adding file_name " << local_files[i] << "to tuple";
     }
+    emit items_changed();
+}
 
-    for (auto& asset : assets) {
-        qDebug() << "assets file_name: " << std::get<0>(asset);
-    }
+std::future<void> DesignFiles::async_design_assets() {
+    return std::async(std::launch::async, &DesignFiles::design_assets, this);
 }
 
 // TODO: sort asset_map
 // std::sort(all_files.begin(), all_files.end(), [](const QString &a, const QString &b) { return a < b; });
 
 QStringList DesignFiles::items() {
-    design_assets();
+    auto future = async_design_assets();
+    future.wait();
+
     QStringList files;
-    int i = 0;
     qDebug() << "Processing items";
+    std::lock_guard<std::mutex> lock(mtx);
     for (auto& asset : assets) {
         QString file_name = QString::fromStdString(std::get<0>(asset));
-        files[i] = file_name;
-        i++;
+        qDebug() << "Processed filename: " << file_name;
+        files.append(file_name);
     }
-
-    d_files = files;
-    emit items_changed();
-
-    return d_files;
+    return files;
 }
 
-QVector<QColor> DesignFiles::colors() const { return file_colors; }
+QVector<QColor> DesignFiles::colors() const {
+    QVector<QColor> file_colors;
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        for (const auto& asset : assets) {
+            QString color_name = QString::fromStdString(std::get<1>(asset));
+            // file_colors.append(QString::fromStdString("red"));
+            file_colors.append(QColor(color_name));
+        }
+    }
+    return file_colors;
+}
 
 DesignFiles::DesignFiles(QObject *parent) : QObject{parent} {
     m_dir_path = init_directory_path();
+    async_design_assets();
 }
