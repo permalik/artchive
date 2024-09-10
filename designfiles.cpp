@@ -9,7 +9,6 @@
 #include <fstream>
 #include <future>
 #include <mutex>
-// #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
 #include "designfiles.h"
@@ -32,6 +31,14 @@ std::string bak_file_path() {
         current_user = std::string(system_user);
     }
     return "/Users/" + current_user + "/.config/artchive_directory_path.txt.bak";
+}
+
+std::string git_status_path() {
+    std::string current_user;
+    if (const char *system_user = std::getenv("USER")) {
+        current_user = std::string(system_user);
+    }
+    return "/Users/" + current_user + "/.config/git_status.txt";
 }
 
 void chown_chmod(const fs::path &file_path) {
@@ -103,38 +110,17 @@ void DesignFiles::set_dir_path(const QString &dir_path) {
     }
 }
 
-    // const std::string git_status_file = "git_status.txt";
-
-    // std::string redirect_new_file = "cd " + dir_path +
-    //                                 " && git status | grep " + "'new file:'" +
-    //                                 " > " + git_status_file;
-    // std::string parsing_string = "\tnew file:/ / / ";
-    // std::vector<std::string> new_files = parse_git_status(
-    //     dir_path, git_status_file, redirect_new_file, parsing_string);
-// std::vector<std::string> git_status(std::string dir_path, std::string
-// git_status_file, std::string redirect_command, std::string parsing_string) {
-//     int result = std::system(redirect_command.c_str());
-//     if (result != 0) {
-//         qWarning() << "Failed to redirect git_status: ";
-//     }
-//
-//     std::ifstream file(dir_path + "/" + git_status_file);
-//     if (!file.is_open()) {
-//         qWarning() << "Cannot open git_status_file: ";
-//     }
-//
-//     std::string line;
-//     std::vector<std::string> file_list;
-//     while (std::getline(file, line)) {
-//         line = line.find(parsing_string);
-//
-//         qDebug() << "file_name: " << line;
-//         file_list.push_back(line);
-//     }
-//
-//     file.close();
-//     return file_list;
-// }
+// TODO: impl more comprehensive statuses
+ std::string getColorForStatus(const std::string& status) {
+     if (status == "??") return "gray";
+     if (status == "M ") return "yellow";
+     if (status == "A ") return "green";
+     if (status == "D ") return "red";
+     if (status == "R ") return "blue";
+     if (status == "C ") return "cyan";
+     if (status == "U ") return "magenta";
+     return "black";
+}
 
 std::mutex mtx;
 
@@ -142,25 +128,53 @@ void DesignFiles::design_assets() {
     std::vector<std::string> local_files;
     const fs::path path{m_dir_path.toStdString()};
 
-    {
-        std::lock_guard<std::mutex> lock(mtx);
-        if (fs::exists(path) && fs::is_directory(path)) {
-            for (const std::filesystem::directory_entry &file : fs::directory_iterator(path)) {
-                std::string file_name = file.path().filename().string();
-                local_files.push_back(file_name);
-                qDebug() << "init file_name: " << QString::fromStdString(file_name);
-            }
-        } else {
-            qWarning() << "Path does not exist or is not a directory: ";
-            return;
+    if (fs::exists(path) && fs::is_directory(path)) {
+        for (const std::filesystem::directory_entry &file : fs::directory_iterator(path)) {
+            std::string file_name = file.path().filename().string();
+            local_files.push_back(file_name);
         }
+    } else {
+        qWarning() << "Path does not exist or is not a directory: ";
+        return;
+    }
+
+    std::string gs_file_path = git_status_path();
+    std::string git_status_cmd = "cd " + m_dir_path.toStdString() + " && git status --porcelain > " + gs_file_path;
+    int git_status_res = std::system(git_status_cmd.c_str());
+    if (git_status_res != 0) {
+        qWarning() << "Failed to redirect git_status_path: ";
+    }
+
+    chown_chmod(gs_file_path);
+    std::ifstream file(gs_file_path);
+    if (!file) {
+        qWarning() << "Failed to open git status path: ";
+    }
+
+    std::vector<std::tuple<std::string, std::string>> git_status;
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.size() < 3) continue;
+        std::string status = line.substr(0, 2);
+        std::string fileName = line.substr(3);
+
+        std::string color = getColorForStatus(status);
+
+        git_status.emplace_back(fileName, color);
+    }
+
+    file.close();
+    // TODO: remove git_status file
+
+    // TODO: use this data
+    for (const auto& status : git_status) {
+        qDebug() << "file_name: " << std::get<0>(status) << "git_status" << std::get<1>(status);
     }
 
     std::lock_guard<std::mutex> lock(mtx);
     assets.resize(local_files.size());
     for (size_t i = 0; i < local_files.size(); i++) {
         assets[i] = std::make_tuple(local_files[i], "red");
-        qDebug() << "adding file_name " << local_files[i] << "to tuple";
     }
     emit items_changed();
 }
@@ -177,11 +191,9 @@ QStringList DesignFiles::items() {
     future.wait();
 
     QStringList files;
-    qDebug() << "Processing items";
     std::lock_guard<std::mutex> lock(mtx);
     for (auto& asset : assets) {
         QString file_name = QString::fromStdString(std::get<0>(asset));
-        qDebug() << "Processed filename: " << file_name;
         files.append(file_name);
     }
     return files;
@@ -193,7 +205,6 @@ QVector<QColor> DesignFiles::colors() const {
         std::lock_guard<std::mutex> lock(mtx);
         for (const auto& asset : assets) {
             QString color_name = QString::fromStdString(std::get<1>(asset));
-            // file_colors.append(QString::fromStdString("red"));
             file_colors.append(QColor(color_name));
         }
     }

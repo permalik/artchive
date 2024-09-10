@@ -35,10 +35,7 @@ signals:
 
 private:
     QString m_dir_path;
-    std::vector<std::string> local_files;
     std::vector<std::tuple<std::string, std::string>> assets;
-    QStringList d_files;
-    QVector<QColor> file_colors;
 };
 
 #endif // DESIGNFILES_H
