@@ -160,6 +160,7 @@ void DesignFiles::design_assets() {
 
         std::string color = getColorForStatus(status);
 
+        // TODO: research emplace
         git_status.emplace_back(fileName, color);
     }
 
@@ -171,10 +172,17 @@ void DesignFiles::design_assets() {
         qDebug() << "file_name: " << std::get<0>(status) << "git_status" << std::get<1>(status);
     }
 
+    // TODO: update colors so strings are passed, not true qcolor
     std::lock_guard<std::mutex> lock(mtx);
     assets.resize(local_files.size());
     for (size_t i = 0; i < local_files.size(); i++) {
-        assets[i] = std::make_tuple(local_files[i], "red");
+        for (const auto& status : git_status) {
+            if (local_files[i] == std::get<0>(status)) {
+                assets[i] = std::make_tuple(std::get<0>(status), std::get<1>(status));
+            } else {
+                assets[i] = std::make_tuple(local_files[i], "black");
+            }
+        }
     }
     emit items_changed();
 }
